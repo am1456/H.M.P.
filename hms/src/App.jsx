@@ -1,34 +1,38 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+import { useEffect, useState } from 'react'
 import './App.css'
+import { ThemeProvider } from './context/ThemeContext'
+import Header from './components/Header'
+import HeroSection from './components/HeroSection'
+import StatsSection from './components/StatsSection'
+import Footer from './components/Footer'
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [themeMode, setThemeMode] = useState("light")
 
+  const lightTheme = () => {
+    setThemeMode("light")
+  }
+
+  const darkTheme = () => {
+    setThemeMode("dark")
+  }
+
+  useEffect(() => {
+    document.querySelector('html').classList.remove("light", "dark")
+    document.querySelector('html').classList.add(themeMode)
+  }, [themeMode])
+  
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+    <ThemeProvider value={{themeMode, lightTheme, darkTheme}}>
+      <div className="w-full min-h-screen bg-white dark:bg-gray-900 transition-colors duration-300 flex flex-col">
+        <Header />
+        <main className="grow">
+          <HeroSection />
+          <StatsSection />
+        </main>
+        <Footer />
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+    </ThemeProvider>
   )
 }
 
