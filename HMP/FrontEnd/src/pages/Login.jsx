@@ -5,7 +5,7 @@ import useTheme from '../context/ThemeContext'
 const Login = ({ role }) => {
   const navigate = useNavigate()
   const { themeMode } = useTheme()
-  
+
   // Form states
   const [formData, setFormData] = useState({
     email: '',
@@ -22,19 +22,19 @@ const Login = ({ role }) => {
       title: "Student Login",
       subtitle: "Access your hostel portal",
       fields: [
-        { 
-          name: "email", 
-          type: "email", 
-          label: "College Email", 
+        {
+          name: "email",
+          type: "email",
+          label: "College Email",
           placeholder: "your.email@nitjsr.ac.in",
-          required: true 
+          required: true
         },
-        { 
-          name: "password", 
-          type: "password", 
-          label: "Password", 
+        {
+          name: "password",
+          type: "password",
+          label: "Password",
           placeholder: "Enter your password",
-          required: true 
+          required: true
         }
       ],
       buttonColor: "bg-green-600 hover:bg-green-700",
@@ -44,21 +44,21 @@ const Login = ({ role }) => {
       title: "Staff Login",
       subtitle: "Access your work portal",
       fields: [
-        { 
-          name: "mobile", 
-          type: "tel", 
-          label: "Mobile Number / मोबाइल नंबर", 
+        {
+          name: "mobile",
+          type: "tel",
+          label: "Mobile Number",
           placeholder: "10-digit mobile number",
           maxLength: 10,
-          required: true 
+          required: true
         },
-        { 
-          name: "pin", 
-          type: "password", 
-          label: "6-digit PIN", 
+        {
+          name: "pin",
+          type: "password",
+          label: "6-digit PIN",
           placeholder: "Enter 6-digit PIN",
           maxLength: 6,
-          required: true 
+          required: true
         }
       ],
       buttonColor: "bg-blue-600 hover:bg-blue-700",
@@ -68,19 +68,19 @@ const Login = ({ role }) => {
       title: "Warden Login",
       subtitle: "Manage your hostel",
       fields: [
-        { 
-          name: "employeeId", 
-          type: "text", 
-          label: "Employee ID", 
+        {
+          name: "employeeId",
+          type: "text",
+          label: "Employee ID",
           placeholder: "Enter your employee ID",
-          required: true 
+          required: true
         },
-        { 
-          name: "password", 
-          type: "password", 
-          label: "Password", 
+        {
+          name: "password",
+          type: "password",
+          label: "Password",
           placeholder: "Enter your password",
-          required: true 
+          required: true
         }
       ],
       buttonColor: "bg-purple-600 hover:bg-purple-700",
@@ -90,19 +90,19 @@ const Login = ({ role }) => {
       title: "Admin Login",
       subtitle: "System administration portal",
       fields: [
-        { 
-          name: "adminId", 
-          type: "text", 
-          label: "Admin ID", 
+        {
+          name: "adminId",
+          type: "text",
+          label: "Admin ID",
           placeholder: "Enter your admin ID",
-          required: true 
+          required: true
         },
-        { 
-          name: "password", 
-          type: "password", 
-          label: "Password", 
+        {
+          name: "password",
+          type: "password",
+          label: "Password",
           placeholder: "Enter your password",
-          required: true 
+          required: true
         }
       ],
       buttonColor: "bg-red-600 hover:bg-red-700",
@@ -123,11 +123,11 @@ const Login = ({ role }) => {
   // Handle form submit
   const handleSubmit = (e) => {
     e.preventDefault()
-    
+
     // For now, just navigate to dashboard (no authentication)
     // Later you'll add API call here
     console.log('Login attempt:', { role, formData })
-    
+
     navigate(config.dashboardPath)
   }
 
@@ -158,7 +158,7 @@ const Login = ({ role }) => {
           <form onSubmit={handleSubmit} className="space-y-6">
             {config.fields.map((field) => (
               <div key={field.name}>
-                <label 
+                <label
                   htmlFor={field.name}
                   className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
                 >
