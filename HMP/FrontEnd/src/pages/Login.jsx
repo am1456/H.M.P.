@@ -8,10 +8,8 @@ const Login = ({ role }) => {
 
   // Form states
   const [formData, setFormData] = useState({
-    email: '',
-    mobile: '',
-    employeeId: '',
-    adminId: '',
+    username: '',
+    mobile: '',,
     password: '',
     pin: ''
   })
@@ -26,7 +24,7 @@ const Login = ({ role }) => {
           name: "username",
           type: "string",
           label: "Username",
-          placeholder: "Enter your username",
+          placeholder: "Enter your Username",
           required: true
         },
         {
@@ -69,10 +67,10 @@ const Login = ({ role }) => {
       subtitle: "Manage your hostel",
       fields: [
         {
-          name: "employeeId",
-          type: "text",
-          label: "Employee ID",
-          placeholder: "Enter your employee ID",
+          name: "username",
+          type: "string",
+          label: "Username",
+          placeholder: "Enter your Username",
           required: true
         },
         {
@@ -91,10 +89,10 @@ const Login = ({ role }) => {
       subtitle: "System administration portal",
       fields: [
         {
-          name: "adminId",
-          type: "text",
-          label: "Admin ID",
-          placeholder: "Enter your admin ID",
+          name: "username",
+          type: "string",
+          label: "username",
+          placeholder: "Enter your Username",
           required: true
         },
         {
