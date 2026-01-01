@@ -121,3 +121,10 @@
     @apply bg-background text-foreground;
   }
 }
+.label-text-style {
+  @apply flex items-center gap-2 text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2 transition-colors;
+}
+
+.input-field-custom {
+  @apply w-full p-3.5 bg-gray-50 dark:bg-gray-900 border-2 border-transparent rounded-xl outline-none transition-all duration-300 dark:text-white focus:border-emerald-600;
+}

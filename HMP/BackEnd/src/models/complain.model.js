@@ -37,4 +37,4 @@ const complaintSchema = new mongoose.Schema({
     semester: { type: String } 
 }, { timestamps: true });
 
-module.exports = mongoose.model('Complaint', complaintSchema);
+export const Complaint = mongoose.model('Complaint', complaintSchema);

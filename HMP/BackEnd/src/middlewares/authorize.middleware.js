@@ -1,4 +1,4 @@
-import { ApiError } from "../ultilities/ApiError";
+import { ApiError } from "../utilities/ApiError.js";
 
 export const requireAdmin = (req, res, next) => {
     if (

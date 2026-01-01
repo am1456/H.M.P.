@@ -1,9 +1,6 @@
 import { Router } from "express";
 import {
-    loginUser,
-    refreshAccessToken,
     logoutUser,
-    forgotPassword,
     changeCurrentPassword,
     getStudentsForWarden,
     getUserById
@@ -13,10 +10,6 @@ import { requireWarden } from "../middlewares/authorize.middleware.js";
 
 const wardenRouter = Router();
 
-wardenRouter.route("/login").post(loginUser);
-wardenRouter.route("/forgot-password").post(forgotPassword);
-
-wardenRouter.route("/refresh-token").post(refreshAccessToken);
 wardenRouter.route("/logout").post(verifyJWT, logoutUser);
 wardenRouter.route("/change-password").post(verifyJWT, changeCurrentPassword);
 

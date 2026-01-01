@@ -20,4 +20,4 @@ const roomSchema = new Schema({
 
 roomSchema.index({ hostel: 1, number: 1 }, { unique: true })
 
-export const Room = mongoose.model;("Room",roomSchema);
+export const Room = mongoose.model("Room",roomSchema);

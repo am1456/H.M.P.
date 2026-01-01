@@ -243,8 +243,9 @@ const createWarden = AsyncHandler(async (req, res) => {
 })
 
 const createStudent = AsyncHandler(async (req, res) => {
+    // 1. Authorization Check
     if (!["admin", "superAdmin"].includes(req.user.role)) {
-        throw new ApiError(403, "Unauthorized")
+        throw new ApiError(403, "Unauthorized: Only Admins can register students");
     }
 
     const {
@@ -256,31 +257,46 @@ const createStudent = AsyncHandler(async (req, res) => {
         hostel,
         mobile,
         room
-    } = req.body
+    } = req.body;
 
+    // 2. Basic Validation
     if (!username || !fullName || !email || !password || !role || !hostel || !room) {
-        throw new ApiError(400, "All fields are required")
+        throw new ApiError(400, "All fields are required, including Hostel and Room assignment");
     }
 
     if (role !== "student") {
-        throw new ApiError(400, "Invalid role");
+        throw new ApiError(400, "Invalid role selection");
     }
 
+    // 3. Room & Hostel Validation
     const roomDoc = await Room.findById(room);
-    if (!roomDoc || roomDoc.hostel.toString() !== hostel) {
-        throw new ApiError(400, "Room does not belong to selected hostel");
+    if (!roomDoc) {
+        throw new ApiError(404, "The selected room does not exist");
     }
 
-    const roomAssigned = await User.findOne({ room })
-    if (roomAssigned) {
-        throw new ApiError(409, "Room already assigned to another student")
+    if (roomDoc.hostel.toString() !== hostel) {
+        throw new ApiError(400, "Security Alert: Room does not belong to the selected hostel");
     }
 
-    const existingUser = await User.findOne({ username })
+    // 4. SMART CAPACITY LOGIC
+    // Count how many students are currently living in this specific room
+    const currentOccupantsCount = await User.countDocuments({ room: room });
+
+    // Check if there is space left based on room capacity
+    if (currentOccupantsCount >= roomDoc.capacity) {
+        throw new ApiError(
+            409, 
+            `Room ${roomDoc.number} is full. Capacity: ${roomDoc.capacity}, Occupants: ${currentOccupantsCount}`
+        );
+    }
+
+    // 5. Check for Duplicate Username
+    const existingUser = await User.findOne({ username });
     if (existingUser) {
-        throw new ApiError(409, "Student already exists")
+        throw new ApiError(409, "A student with this Username/ID already exists");
     }
 
+    // 6. Create the Student
     const user = await User.create({
         username,
         fullName,
@@ -290,27 +306,23 @@ const createStudent = AsyncHandler(async (req, res) => {
         hostel,
         mobile,
         room
-    })
+    });
 
-    const createdUser = await User.findById(user._id).select(
-        "-password -refreshToken"
-    );
+    // 7. Verify Creation and Remove Sensitive Data
+    const createdUser = await User.findById(user._id).select("-password -refreshToken");
 
     if (!createdUser) {
-        throw new ApiError(
-            500,
-            "Something went wrong while registering the user"
-        );
+        throw new ApiError(500, "Something went wrong while registering the student");
     }
 
     return res.status(201).json(
         new ApiResponse(
             201,
             createdUser,
-            "Student is created successfully`"
+            `Student ${fullName} enrolled successfully in Room ${roomDoc.number}`
         )
-    )
-})
+    );
+});
 
 const forgotPassword = AsyncHandler(async (req, res) => {
     const { username, email, newPassword } = req.body;
@@ -434,7 +446,9 @@ const createSuperAdmin = AsyncHandler(async (req, res) => {
 const getAllUsersForAdmin = AsyncHandler(async (req, res) => {
     const { role, hostel, search, page = 1, limit = 10 } = req.query;
 
-    const query = {};
+    const query = {
+        role: { $nin: ["admin", "superAdmin"] }
+    };
 
     // 1️⃣ role filter
     if (role) {
@@ -457,9 +471,10 @@ const getAllUsersForAdmin = AsyncHandler(async (req, res) => {
     const users = await User.find(query)
         .select("-password -refreshToken")
         .populate("hostel", "name code")
+        .populate("room", "number")
         .skip((page - 1) * limit)
         .limit(Number(limit))
-        .sort({ createdAt: 1 });
+        .sort({ createdAt: -1 });
 
     const totalUsers = await User.countDocuments(query);
 
@@ -477,63 +492,63 @@ const getAllUsersForAdmin = AsyncHandler(async (req, res) => {
 });
 
 const getStudentsForWarden = AsyncHandler(async (req, res) => {
-  const { page = 1, limit = 10, search = "" } = req.query;
+    const { page = 1, limit = 10, search = "" } = req.query;
 
-  const matchStage = {
-    role: "student",
-    hostel: req.user.hostel,
-  };
+    const matchStage = {
+        role: "student",
+        hostel: req.user.hostel,
+    };
 
-  if (search) {
-    matchStage.$or = [
-      { fullName: { $regex: search, $options: "i" } },
-      { username: { $regex: search, $options: "i" } },
+    if (search) {
+        matchStage.$or = [
+            { fullName: { $regex: search, $options: "i" } },
+            { username: { $regex: search, $options: "i" } },
+        ];
+    }
+
+    const pipeline = [
+        { $match: matchStage },
+
+        {
+            $lookup: {
+                from: "rooms",
+                localField: "room",
+                foreignField: "_id",
+                as: "room",
+            },
+        },
+
+        { $unwind: "$room" },
+
+        { $sort: { "room.number": 1 } },
+
+        { $skip: (page - 1) * limit },
+        { $limit: Number(limit) },
+
+        {
+            $project: {
+                password: 0,
+                refreshToken: 0,
+            },
+        },
     ];
-  }
 
-  const pipeline = [
-    { $match: matchStage },
+    const students = await User.aggregate(pipeline);
 
-    {
-      $lookup: {
-        from: "rooms",
-        localField: "room",
-        foreignField: "_id",
-        as: "room",
-      },
-    },
+    // Count total
+    const totalStudents = await User.countDocuments(matchStage);
 
-    { $unwind: "$room" },
-
-    { $sort: { "room.number": 1 } },
-
-    { $skip: (page - 1) * limit },
-    { $limit: Number(limit) },
-
-    {
-      $project: {
-        password: 0,
-        refreshToken: 0,
-      },
-    },
-  ];
-
-  const students = await User.aggregate(pipeline);
-
-  // Count total
-  const totalStudents = await User.countDocuments(matchStage);
-
-  return res.status(200).json(
-    new ApiResponse(200, {
-      students,
-      pagination: {
-        total: totalStudents,
-        page: Number(page),
-        limit: Number(limit),
-        totalPages: Math.ceil(totalStudents / limit),
-      },
-    })
-  );
+    return res.status(200).json(
+        new ApiResponse(200, {
+            students,
+            pagination: {
+                total: totalStudents,
+                page: Number(page),
+                limit: Number(limit),
+                totalPages: Math.ceil(totalStudents / limit),
+            },
+        })
+    );
 });
 
 const getUserById = AsyncHandler(async (req, res) => {
@@ -603,6 +618,23 @@ const updateUserByAdmin = AsyncHandler(async (req, res) => {
     )
 })
 
+const deleteUser = AsyncHandler(async (req, res) => {
+    if (!["admin", "superAdmin"].includes(req.user.role)) {
+        throw new ApiError(403, "Unauthorized: Only admins can remove users");
+    }
+
+    const { userId } = req.params;
+
+    const user = await User.findByIdAndDelete(userId);
+
+    if (!user) {
+        throw new ApiError(404, "User not found");
+    }
+
+    return res.status(200).json(
+        new ApiResponse(200, null, "User deleted successfully")
+    );
+});
 
 
 export {
@@ -618,5 +650,6 @@ export {
     getAllUsersForAdmin,
     getStudentsForWarden,
     getUserById,
-    updateUserByAdmin
+    updateUserByAdmin,
+    deleteUser
 }
