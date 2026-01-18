@@ -20,16 +20,18 @@ app.use(cookieParser());
 import userRouter from "./routes/user.routes.js";
 import adminRouter from "./routes/admin.routes.js"
 import wardenRouter from "./routes/warden.routes.js";
-import studentRouter from "./routes/student.routes.js";
+// import studentRouter from "./routes/student.routes.js";
 import hostelRouter from "./routes/hostel.routes.js";
 import roomRouter from "./routes/room.routers.js";
+// import staffRouter from "./routes/staff.routes.js";
 
 app.use("/api/v1/user", userRouter);
 app.use("/api/v1/admin", adminRouter);
 app.use("/api/v1/warden", wardenRouter);
-app.use("/api/v1/student", studentRouter);
+// app.use("/api/v1/student", studentRouter);
 app.use("/api/v1/hostel", hostelRouter);
 app.use("/api/v1/room", roomRouter);
+// app.use("/api/v1/staff",staffRouter)
 
 // Error handling middleware
 app.use((err, req, res, next) => {

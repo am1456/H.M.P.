@@ -69,6 +69,7 @@ const createHostelBatch = AsyncHandler(async (req, res) => {
         throw new ApiError(500, "Failed to generate rooms. Hostel creation rolled back.");
     }
 });
+
 const getAllHostels = AsyncHandler(async (req, res) => {
     // Fetch only what we need for the dropdown (id, name, code)
     const hostels = await Hostel.find({}).select("name code _id");

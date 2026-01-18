@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import apiClient from '../../api/axios.js';
+import apiClient from '../../api/axios.js';// in place of axios we are using apiClient as we have made a mechanism for the refresh the AccessTokens
 import { Search, Filter, Users, ChevronLeft, ChevronRight, UserCog } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
@@ -9,14 +9,15 @@ const SearchUsers = () => {
 
     // 2. All States
     const [users, setUsers] = useState([]);
-    const [filters, setFilters] = useState({ role: '', hostel: '', search: '', page: 1 });
+    const [filters, setFilters] = useState({ role: '', hostel: '', search: '', page: 1 });// don't fear we hanve mechanisim for increasing and decreasing this page number in the footer part 
     const [pagination, setPagination] = useState({});
     const [hostels, setHostels] = useState([]);
     const [loading, setLoading] = useState(false);
 
   // 1. Fetch Hostels for the filter dropdown
   useEffect(() => {
-    apiClient.get('/api/v1/hostel/get-all-hostels').then(res => setHostels(res.data.data));
+    apiClient.get('/api/v1/hostel/get-all-hostels')
+    .then(res => setHostels(res.data.data)); // Insert the response inside the setHostel State for futher use
   }, []);
 
   // 2. Fetch Users whenever filters change
@@ -24,7 +25,7 @@ const SearchUsers = () => {
     const delayDebounce = setTimeout(() => {
       fetchUsers();
     }, 300); // Small debounce to prevent hitting API on every keystroke
-    return () => clearTimeout(delayDebounce);
+    return () => clearTimeout(delayDebounce);// clearTimeout() is a JavaScript function used to cancel a timer that was previously set with setTimeout(), preventing the scheduled code from running by using the unique ID returned by setTimeout(). It's essential for controlling asynchronous tasks, like stopping a search from firing on every keystroke until the user pauses typing, by passing the timerId to clearTimeout(timerId) to halt execution.
   }, [filters]);
 
   const fetchUsers = async () => {
@@ -36,6 +37,15 @@ const SearchUsers = () => {
 
       setUsers(res.data.data.users);
       setPagination(res.data.data.pagination);
+  /*
+  Axios response
+ └── data   ← entire backend response
+      ├── statusCode
+      ├── message
+      └── data   ← your actual payload
+           ├── users
+           └── pagination
+  */
     } catch (err) {
       console.error(err);
     } finally {
@@ -111,15 +121,14 @@ const SearchUsers = () => {
                   <div className="text-xs text-gray-400">@{user.username}</div>
                 </td>
                 <td className="px-6 py-4">
-                  <span className={`px-2 py-1 rounded-full text-[10px] font-bold uppercase ${user.role === 'admin'  ? 'bg-red-100 text-red-700' : user.role === 'superAdmin' ? 'bg-red-100 text-red-700':
-                    user.role === 'warden' ? 'bg-purple-100 text-purple-700' :
+                  <span className={`px-2 py-1 rounded-full text-[10px] font-bold uppercase ${user.role === 'warden' ? 'bg-purple-100 text-purple-700' :
                       'bg-emerald-100 text-emerald-700'
                     }`}>
                     {user.role}
                   </span>
                 </td>
                 <td className="px-6 py-4">
-                  <div className="text-sm dark:text-gray-300">{user.hostel?.name || 'N/A'}</div>
+                  <div className="text-sm dark:text-gray-300">{user.hostel?.name}</div>
                   {user.room && (
                     <div className="text-xs text-gray-500">Room: {user.room.number}</div>
                   )}

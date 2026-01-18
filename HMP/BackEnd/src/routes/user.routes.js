@@ -1,4 +1,4 @@
-import { loginUser, forgotPassword,refreshAccessToken } from "../controllers/user.controller.js";
+import { loginUser, forgotPassword, refreshAccessToken } from "../controllers/user.controller.js";
 import { Router } from "express";
 
 const userRouter = Router();

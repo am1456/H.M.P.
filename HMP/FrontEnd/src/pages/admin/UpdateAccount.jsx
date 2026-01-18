@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useSelector, useDispatch } from 'react-redux';
-import { login } from '../../store/authSliice.js';
+import { login } from '../../store/authSlice.js';
 import apiClient from '../../api/axios.js';
 import { User, Mail, Smartphone, ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';

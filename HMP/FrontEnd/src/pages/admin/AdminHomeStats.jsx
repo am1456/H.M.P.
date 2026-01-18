@@ -1,7 +1,7 @@
 import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { logout } from '../../store/authSliice.js';
+import { logout } from '../../store/authSlice.js';
 import apiClient from '../../api/axios.js';
 import { User, Lock, LogOut, ShieldCheck } from 'lucide-react';
 

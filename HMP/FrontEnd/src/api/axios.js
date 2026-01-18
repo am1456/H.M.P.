@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const apiClient = axios.create({
-    baseURL: "/", // or your backend URL
+    baseURL: "/", 
     withCredentials: true
 });
 
@@ -11,19 +11,31 @@ apiClient.interceptors.response.use(
     async (error) => {
         const originalRequest = error.config;
 
-        // If error is 401 and we haven't retried yet
+        // Check if error is 401 and not already retried
         if (error.response?.status === 401 && !originalRequest._retry) {
             originalRequest._retry = true;
 
             try {
-                // Call your refresh token endpoint
+                // Use a standard axios call (not apiClient) to avoid loops
+                // The backend now handles finding the user in User or Staff collection
                 await axios.post("/api/v1/user/refresh-token", {}, { withCredentials: true });
                 
-                // If refresh works, retry the original request that failed
+                // Retry original request
                 return apiClient(originalRequest);
             } catch (refreshError) {
-                // If refresh token also expired, logout the user
-                window.location.href = "/login/admin"; 
+                // Determine where to redirect based on the current path
+                const currentPath = window.location.pathname;
+                
+                if (currentPath.includes("/staff")) {
+                    window.location.href = "/login/staff";
+                }else if (currentPath.includes("/warden")) {
+                    window.location.href = "/login/warden";
+                }else if (currentPath.includes("/student")) {
+                    window.location.href = "/login/student";
+                } else {
+                    window.location.href = "/login/admin";
+                }
+                
                 return Promise.reject(refreshError);
             }
         }

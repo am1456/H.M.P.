@@ -19,12 +19,12 @@ const AddStudent = () => {
     const navigate = useNavigate();
     
     // States for Data and UI
-    const [hostels, setHostels] = useState([]);
+    const [hostels, setHostels] = useState([]);               // List of all hostels
     const [availableRooms, setAvailableRooms] = useState([]); // Master list from DB
     const [filteredRooms, setFilteredRooms] = useState([]);   // List shown in dropdown
     const [roomSearch, setRoomSearch] = useState("");         // What's typed in the room input
-    const [loading, setLoading] = useState(false);
-    const [message, setMessage] = useState({ type: '', text: '' });
+    const [loading, setLoading] = useState(false);            // Form submission state
+    const [message, setMessage] = useState({ type: '', text: '' }); // Success/error message
 
     const { register, handleSubmit, watch, reset, setValue, formState: { errors } } = useForm({
         defaultValues: {

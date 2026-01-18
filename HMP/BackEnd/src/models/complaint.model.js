@@ -12,29 +12,40 @@ const complaintSchema = new mongoose.Schema({
     student: { 
         type: mongoose.Schema.Types.ObjectId, 
         ref: 'User', 
-        required: true }, 
+        required: true 
+    }, 
     hostel: { 
         type: mongoose.Schema.Types.ObjectId, 
         ref: 'Hostel', 
         required: true 
     },
-    category: {
+    room: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Room',
+        required : true
+    },
+    mobile: {
         type: String,
-        enum: ['electrical', 'plumbing', 'cleaning', 'internet', 'furniture'],
-        required: true
+        required: true 
     },
     assignedRole: {
         type: String,
         enum: ['electrician', 'plumber', 'cleaner', 'network', 'carpenter'],
         required: true
     },
-    status: {
+    statusbyStudent: {
         type: String,
-        enum: ['OPEN', 'RESOLVED'],
-        default: 'OPEN'
+        enum: ['PENDING', 'RESOLVED'],
+        default: 'PENDING'
     },
-    resolvedAt: { type: Date },
-    semester: { type: String } 
+    statusbyStaff: {
+        type: String,
+        enum: ['SETTLED','UNSETTLED'],
+        default: 'UNSETTLED'
+    },
+    resolvedAt: { 
+        type: Date 
+    },
 }, { timestamps: true });
 
 export const Complaint = mongoose.model('Complaint', complaintSchema);

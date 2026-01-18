@@ -16,7 +16,7 @@ const staffSchema = new mongoose.Schema(
 
         
         role: {
-            type: String,
+            type: [String],
             enum: ['electrician', 'plumber', 'cleaner', 'network', 'carpenter'],
             required: true,
         },
@@ -39,9 +39,9 @@ const staffSchema = new mongoose.Schema(
 );
 
 staffSchema.pre("save", async function () {
-    if (!this.isModified("password")) return;
+    if (!this.isModified("pin")) return;
 
-    this.password = await bcrypt.hash(this.password, 10);
+    this.pin = await bcrypt.hash(this.pin, 10);
 });
 
 staffSchema.methods.ispinCorrect = async function (pin) {
@@ -67,4 +67,4 @@ staffSchema.methods.generateRefreshToken = function () {
     )
 
 }
-export const User = mongoose.model("Staff", staffSchema);
+export const Staff = mongoose.model("Staff", staffSchema);

@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import useTheme from '../context/ThemeContext';
 import { useDispatch } from 'react-redux';
-import { login } from '../store/authSliice.js'
+import { login } from '../store/authSlice.js'
 
 const Login = ({ role }) => {
   const navigate = useNavigate();
@@ -151,7 +151,7 @@ const Login = ({ role }) => {
               </div>
             ))}
 
-            <div className="flex justify-end">
+            {role !== "staff" && ( <div className="flex justify-end">
               <button
                 type="button"
                 onClick={() => navigate('/forgot-password')}
@@ -159,8 +159,8 @@ const Login = ({ role }) => {
               >
                 Forgot password?
               </button>
-            </div>
-
+            </div> )
+            }
             <button
               type="submit"
               disabled={loading}

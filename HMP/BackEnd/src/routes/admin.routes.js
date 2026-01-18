@@ -1,6 +1,6 @@
 import { Router } from "express";
+import { logoutUser } from "../controllers/user.controller.js"
 import {
-    logoutUser,
     createAdmin,
     createWarden,
     createStudent,
@@ -10,7 +10,7 @@ import {
     getUserById,
     updateUserByAdmin,
     deleteUser
-} from "../controllers/user.controller.js";
+} from "../controllers/admin.controller.js";
 import { verifyJWT } from "../middlewares/authentication.middleware.js";
 import { requireAdmin, requireSuperAdmin } from "../middlewares/authorize.middleware.js";
 
