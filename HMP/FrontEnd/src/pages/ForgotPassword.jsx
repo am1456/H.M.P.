@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import apiClient from "@/api/axios";
 
 const ForgotPassword = () => {
   const navigate = useNavigate();
@@ -29,7 +29,7 @@ const ForgotPassword = () => {
     setLoading(true);
 
     try {
-      const res = await axios.post(
+      const res = await apiClient.post(
         "/api/v1/user/forgot-password",
         formData
       );
