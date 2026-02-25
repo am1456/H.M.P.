@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios'; 
+import apiClient from '../api/axios.js';
 import StatsCard from './StatsCard';
 import AnimatedCounter from './AnimatedCounter'; // Import the counter
 
@@ -12,7 +12,7 @@ const StatsSection = () => {
     const fetchStats = async () => {
       try {
         // Assuming your app.js maps hostelRouter to /api/v1/hostel
-        const response = await axios.get('/api/v1/hostel/hostel-count');
+        const response = await apiClient.get('/api/v1/hostel/hostel-count');
         
         // Ensure we get the correct data path from your ApiResponse
         if (response.data?.success) {

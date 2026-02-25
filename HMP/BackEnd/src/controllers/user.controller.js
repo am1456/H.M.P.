@@ -64,11 +64,18 @@ const loginUser = AsyncHandler(async (req, res) => {
     }
     const { accessToken, refreshToken } = await generateAccessTokenAndRefreshToken(user._id)
     const loggedInUser = await User.findById(user._id).select("-password -refreshToken")
+
+    // 👇 SMART COOKIE SETTINGS (Works for Localhost & Render)
+    const isProduction = process.env.NODE_ENV === "production";
+
     const options = {
         httpOnly: true,
-        secure: true,
-        sameSite: "None",
+        // On Render (HTTPS), we NEED Secure. On Localhost (HTTP), we cannot use it.
+        secure: isProduction, 
+        // On Render (Cross-Domain), we NEED 'None'. On Localhost, 'Lax' is safer/standard.
+        sameSite: isProduction ? "None" : "Lax", 
     }
+
     return res
         .status(200)
         .cookie("accessToken", accessToken, options)
@@ -83,7 +90,6 @@ const loginUser = AsyncHandler(async (req, res) => {
             )
         )
 })
-
 
 
 
