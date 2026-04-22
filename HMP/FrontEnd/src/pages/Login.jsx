@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import apiClient from '../api/axios';
 import useTheme from '../context/ThemeContext';
 import { useDispatch } from 'react-redux';
 import { login } from '../store/authSlice.js'
@@ -82,7 +82,7 @@ const Login = ({ role }) => {
     setError("");
 
     try {
-      const response = await axios.post("/api/v1/user/login", formData, { withCredentials: true });
+      const response = await apiClient.post("/api/v1/user/login", formData, { withCredentials: true });
 
       if (response.data.success) {
         const userToStore = response.data.data.user;

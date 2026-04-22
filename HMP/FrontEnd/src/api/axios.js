@@ -3,7 +3,7 @@ import axios from "axios";
 // 1. Define the Backend URL dynamically
 // In Localhost: It will use "" (and fallback to proxy if you keep it)
 // In Production: It will use the URL we set in Render Dashboard
-const SERVER_URL = import.meta.env.VITE_SERVER_URL || ""; 
+const SERVER_URL = import.meta.env.VITE_SERVER_URL || "http://localhost:8000"; 
 
 const apiClient = axios.create({
     baseURL: SERVER_URL, 
