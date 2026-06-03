@@ -30,7 +30,7 @@ export default function AuthLayout({
             if (userData) {
                 const hasPermission = allowedRoles.includes(userData.role);
                 if (!hasPermission) {
-                    navigate(`/login/${userData.role === 'admin' ? 'admin' : 'student'}`);
+                    navigate("/");
                     return;
                 }
             }

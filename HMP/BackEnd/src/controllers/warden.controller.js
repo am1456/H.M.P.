@@ -100,7 +100,7 @@ const getWardenComplainList = AsyncHandler(async (req, res) => {
                 studentName: { $arrayElemAt: ["$studentDoc.fullName", 0] },
                 enrollmentNo: { $arrayElemAt: ["$studentDoc.username", 0] },
                 // Handle case where room might be missing/deleted
-                roomNumber: { $ifNull: [{ $arrayElemAt: ["$roomDoc.roomNumber", 0] }, "N/A"] }
+                roomNumber: { $ifNull: [{ $arrayElemAt: ["$roomDoc.number", 0] }, "N/A"] }
             }
         },
 

@@ -38,7 +38,7 @@ import adminRouter from "./routes/admin.routes.js"
 import wardenRouter from "./routes/warden.routes.js";
 import studentRouter from "./routes/student.routes.js";
 import hostelRouter from "./routes/hostel.routes.js";
-import roomRouter from "./routes/room.routers.js";
+import roomRouter from "./routes/room.routes.js";
 import complaintRouter from "./routes/complaint.route.js";
 // import staffRouter from "./routes/staff.routes.js";
 

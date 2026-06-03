@@ -42,11 +42,8 @@ const router = createBrowserRouter(
     <Route path='/' element={<App />}>
       <Route index element={<LandingPage />} />
 
-      {/* Login Routes */}
-      <Route path='login/student' element={<Login role="student" />} />
-      <Route path='login/staff' element={<Login role="staff" />} />
-      <Route path='login/warden' element={<Login role="warden" />} />
-      <Route path='login/admin' element={<Login role="admin" />} />
+      {/* Single Dynamic Login Route - supports all roles */}
+      <Route path='login/:role' element={<Login />} />
       <Route path='forgot-password' element={<ForgotPassword />} />
 
       <Route

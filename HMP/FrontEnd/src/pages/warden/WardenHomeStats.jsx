@@ -35,7 +35,7 @@ const WardenHomeStats = () => {
     <div className="space-y-6 animate-in fade-in duration-500">
       
       {/* 1. WELCOME HEADER */}
-      <div className="bg-gradient-to-r from-purple-700 to-purple-900 rounded-3xl p-8 text-white shadow-2px shadow-purple-200 relative overflow-hidden">
+      <div className="bg-linear-to-r from-purple-700 to-purple-900 rounded-3xl p-8 text-white shadow-2px shadow-purple-200 relative overflow-hidden">
         <div className="relative z-10">
           <h1 className="text-3xl font-bold mb-2">
             Welcome, Warden {userData?.fullName?.split(" ")[0]}! 🛡️
@@ -96,7 +96,7 @@ const WardenHomeStats = () => {
           </div>
           
           {/* THE BIG EMPTY DIV */}
-          <div className="flex-1 bg-gray-50 rounded-xl border-2 border-dashed border-gray-200 min-h-[250px]">
+          <div className="flex-1 bg-gray-50 rounded-xl border-2 border-dashed border-gray-200 min-h-62.5">
              {/* Absolutely nothing inside, just structure */}
           </div>
         </div>

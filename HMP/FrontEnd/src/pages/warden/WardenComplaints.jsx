@@ -175,7 +175,7 @@ const WardenComplaints = () => {
                 </div>
 
                 {/* 2. Assignment & Actions */}
-                <div className="flex flex-row md:flex-col items-center md:items-end justify-between min-w-[200px] gap-4 border-t md:border-t-0 md:border-l border-gray-100 pt-4 md:pt-0 md:pl-6">
+                <div className="flex flex-row md:flex-col items-center md:items-end justify-between min-w-50 gap-4 border-t md:border-t-0 md:border-l border-gray-100 pt-4 md:pt-0 md:pl-6">
                   
                   {/* Current Status */}
                   <div className="text-right">
@@ -188,22 +188,11 @@ const WardenComplaints = () => {
                       {item.statusbyStudent}
                     </div>
                     
-                    {/* Staff Assignment Status */}
-                    <div className="flex items-center justify-end gap-1.5 text-xs font-medium text-gray-500 mt-2">
-                       <Wrench size={14} />
-                       {/* Handle if assignedStaff is populated or just an ID */}
-                       {item.assignedStaff ? (
-                         <span className="text-purple-700 font-bold">
-                            {typeof item.assignedStaff === 'object' ? item.assignedStaff.name : "Staff Assigned"}
-                         </span>
-                       ) : (
-                         <span className="text-orange-400 italic">Unassigned</span>
-                       )}
-                    </div>
+                    
                   </div>
 
                   {/* Action Button */}
-                  {item.statusbyStudent === 'PENDING' && (
+                  {/* {item.statusbyStudent === 'PENDING' && (
                     <button 
                       className="w-full md:w-auto px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold rounded-lg shadow-md shadow-purple-200 transition active:scale-95 flex items-center justify-center gap-2"
                       onClick={() => alert(`Next Step: Open 'Assign Staff' Modal for Complaint #${item._id.slice(-6)}`)}
@@ -211,7 +200,7 @@ const WardenComplaints = () => {
                       <User size={14} /> 
                       {item.assignedStaff ? "Re-Assign" : "Assign Staff"}
                     </button>
-                  )}
+                  )} */}
 
                 </div>
               </div>

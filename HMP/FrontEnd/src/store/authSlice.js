@@ -4,8 +4,8 @@ const storedUser = localStorage.getItem("userData");
 
 const initialState = {
     status: storedUser ? true : false,
-    userData: storedUser ? JSON.parse(storedUser) : null, // Added missing comma here
-    isProfileComplete: true // Keep this true initially to avoid a "flicker" of the blur
+    userData: storedUser ? JSON.parse(storedUser) : null,
+    isProfileComplete: true 
 };
 
 const authSlice = createSlice({

@@ -9,12 +9,16 @@ function App() {
   const darkTheme = () => setThemeMode("dark")
 
   useEffect(() => {
-    document.querySelector('html').classList.remove("light", "dark")
-    document.querySelector('html').classList.add(themeMode)
+    // Set the theme class on the root HTML element
+    const htmlElement = document.querySelector('html')
+    if (htmlElement) {
+      htmlElement.classList.remove("light", "dark")
+      htmlElement.classList.add(themeMode)
+    }
   }, [themeMode])
   
   return (
-    <ThemeProvider value={{themeMode, lightTheme, darkTheme}}>
+    <ThemeProvider value={{ themeMode, lightTheme, darkTheme }}>
       <div className="w-full min-h-screen bg-white dark:bg-gray-900 transition-colors duration-300">
         <Outlet />
       </div>
