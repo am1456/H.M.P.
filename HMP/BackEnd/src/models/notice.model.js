@@ -9,8 +9,10 @@ const noticeSchema = new mongoose.Schema({
     },
     description: {
         type: String, 
-        required: true,
         trim: true
+    },
+    attachmentUrl: {
+        type: String
     },
     issuedBy: {
         type: mongoose.Schema.Types.ObjectId,

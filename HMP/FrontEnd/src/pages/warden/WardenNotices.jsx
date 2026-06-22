@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Bell, Calendar, User, Plus, Trash2 } from "lucide-react";
+import { Bell, Calendar, User, Plus, Trash2, Paperclip, ExternalLink } from "lucide-react";
 import apiClient from "@/api/axios";
 import { useNavigate } from "react-router-dom";
 
@@ -136,14 +136,45 @@ const WardenNotices = () => {
     </button>
    </div>
   </div>
-    <p className="text-gray-600 leading-relaxed mb-4">
+    <div className="space-y-4">
+
+  {notice.description && (
+    <p className="text-gray-600 leading-relaxed">
       {notice.description}
     </p>
+  )}
 
-    <div className="flex items-center text-sm text-gray-500">
-        <User size={14} className="mr-2" />
-            Issued by: {notice.issuedBy?.fullName}
+  {notice.attachmentUrl && (
+    <div className="bg-purple-50 border border-purple-100 rounded-xl p-3">
+      <div className="flex items-center justify-between flex-wrap gap-3">
+
+        <div className="flex items-center gap-2 text-purple-700">
+          <Paperclip size={16} />
+          <span className="font-medium text-sm">
+            Attachment Available
+          </span>
+        </div>
+
+        <a
+          href={notice.attachmentUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-2 bg-purple-600 hover:bg-purple-700 text-white px-3 py-2 rounded-lg text-sm font-semibold transition"
+        >
+          <ExternalLink size={14} />
+          View Attachment
+        </a>
+
       </div>
+    </div>
+  )}
+
+  <div className="flex items-center text-sm text-gray-500">
+    <User size={14} className="mr-2" />
+    Issued by: {notice.issuedBy?.fullName}
+  </div>
+
+</div>
       </div>
     ))}
     </div>

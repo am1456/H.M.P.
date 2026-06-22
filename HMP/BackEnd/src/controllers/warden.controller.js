@@ -6,6 +6,7 @@ import { Complaint } from "../models/complaint.model.js";
 import { Notice } from "../models/notice.model.js";
 import { User } from "../models/user.model.js";
 import mongoose from "mongoose";
+import { uploadOnCloudinary } from "../utilities/cloudinary.js";
 
 const createStaff = AsyncHandler(async (req, res) => {
     const { phone, fullName, roles, pin } = req.body;
@@ -278,8 +279,8 @@ const getStudentDetail = AsyncHandler(async (req, res) => {
 const createNotice = AsyncHandler(async (req, res) => {
     const {title, description} = req.body;
 
-    if ([title, description].some(field => !field?.trim())) {
-        throw new ApiError(400, "Title and Description are required");
+    if (!title?.trim()) {
+        throw new ApiError(400, "Title is required");
     }
 
     const user = await User.findById(req.user._id);
@@ -287,14 +288,31 @@ const createNotice = AsyncHandler(async (req, res) => {
     if(!user){
         throw new ApiError(404, "Warden record not found")
     }
-        
+
+    const localFilePath = req.file?.path;
+
+    if((!localFilePath) && (!description?.trim()))
+        throw new ApiError(400, "Either a description or an attachment is required.")
+
+    let attachment = null;
+
+    if(localFilePath)
+    {
+        attachment = await uploadOnCloudinary(localFilePath);
+    }
+
+    if(localFilePath && (!attachment))
+        throw new ApiError(500, "A problem occured while uploading attachment");
+
+
     const notice = await Notice.create({
         title,
         description,
+        attachmentUrl: attachment?.secure_url || "",
         issuedBy: user._id,
         hostel: user.hostel
     });
-
+    
     return res.status(201).json(
             new ApiResponse(201, notice, "Notice issued successfully")
         );
