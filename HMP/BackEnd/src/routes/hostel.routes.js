@@ -9,4 +9,5 @@ hostelRouter.route("/hostel-count").get(getHostelCount);
 hostelRouter.route("/add-hostel").post(verifyJWT, requireAdmin, createHostelBatch);
 hostelRouter.route("/get-all-hostels").get(verifyJWT, getAllHostels);
 
+
 export default hostelRouter;

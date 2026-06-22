@@ -58,8 +58,6 @@ const createHostelBatch = AsyncHandler(async (req, res) => {
         );
 
     } catch (error) {
-        // ADD THIS LINE TO SEE THE REAL ERROR IN TERMINAL
-        console.log("🔥 ERROR GENERATING ROOMS:", error); 
 
         // If creation fails, delete the hostel so we don't have empty buildings
         if (hostel?._id) {

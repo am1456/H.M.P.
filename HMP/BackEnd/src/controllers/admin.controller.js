@@ -263,17 +263,17 @@ const getAllUsersForAdmin = AsyncHandler(async (req, res) => {
         role: { $nin: ["admin", "superAdmin"] }
     };
 
-    // 1️⃣ role filter
+    // 1️ role filter
     if (role) {
         query.role = role;
     }
 
-    // 2️⃣ hostel filter
+    // 2️ hostel filter
     if (hostel) {
         query.hostel = hostel;
     }
 
-    // 3️⃣ search (username OR fullName)
+    // 3️ search (username OR fullName)
     if (search) {
         query.$or = [
             { fullName: { $regex: search, $options: "i" } },//$regex help us to search partially i.e. for Arpan it will match with even Arpan123, and $options: "i" means case-insensitive

@@ -11,7 +11,8 @@ import {
     deleteComplaint,
     getStudentComplaints,
     getStudentDashboardStats,
-    getCurrentStudentProfile
+    getCurrentStudentProfile,
+    getAllStudentCount
 } from "../controllers/student.controller.js";
 import { getAllNotices } from "../controllers/notice.controller.js";
 import { verifyJWT } from "../middlewares/authentication.middleware.js";
@@ -31,6 +32,7 @@ studentRouter.route("/delete-complaint/:complaintId").delete(verifyJWT, requireS
 studentRouter.route("/dashboard-stats").get(verifyJWT, requireStudent, getStudentDashboardStats);
 studentRouter.route("/profile").get(verifyJWT, requireStudent, getCurrentStudentProfile);
 studentRouter.route("/notice/viewNotices").get(verifyJWT, getAllNotices);
+studentRouter.route("/student-count").get(getAllStudentCount);
 
 
 export default studentRouter;

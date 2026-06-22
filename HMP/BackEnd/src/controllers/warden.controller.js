@@ -48,13 +48,6 @@ const createStaff = AsyncHandler(async (req, res) => {
 
 const getWardenComplainList = AsyncHandler(async (req, res) => {
     const { status, role, search } = req.query;
-
-    // 🔍 DEBUG LOG: See what the Warden user looks like
-    // console.log("Warden Request User:", {
-    //     id: req.user._id,
-    //     hostel: req.user.hostel
-    // });
-
     // 1. SAFETY CHECK: Does the Warden have a hostel?
     if (!req.user.hostel) {
         return res.status(200).json(
@@ -120,9 +113,6 @@ const getWardenComplainList = AsyncHandler(async (req, res) => {
         // F. Sort Newest First
         { $sort: { createdAt: -1 } }
     ]);
-
-    // 🔍 DEBUG LOG: Check results count
-    // console.log(`Found ${complaints.length} complaints for hostel ${wardenHostelId}`);
 
     return res.status(200).json(
         new ApiResponse(200, complaints, "Data fetched successfully")

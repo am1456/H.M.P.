@@ -1,22 +1,24 @@
 import React, { useEffect, useState } from 'react';
 import apiClient from '../api/axios.js';
 import StatsCard from './StatsCard';
-import AnimatedCounter from './AnimatedCounter'; // Import the counter
+import AnimatedCounter from './AnimatedCounter';
+import { AlertTriangle, CheckCircle2, Building2, Users } from 'lucide-react';
 
 const StatsSection = () => {
-  // 1. State to store the real count from Database
   const [hostelCount, setHostelCount] = useState(0);
+  const [studentCount, setStudentCount] = useState(0);
 
-  // 2. Fetch data on component mount
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        // Assuming your app.js maps hostelRouter to /api/v1/hostel
-        const response = await apiClient.get('/api/v1/hostel/hostel-count');
+        const hostelnumber = await apiClient.get('/api/v1/hostel/hostel-count');
+        const studentnumber = await apiClient.get('/api/v1/student/student-count');
         
-        // Ensure we get the correct data path from your ApiResponse
-        if (response.data?.success) {
-            setHostelCount(response.data.data.count);
+        if (hostelnumber.data?.success) {
+            setHostelCount(hostelnumber.data.data.count);
+        }
+        if(studentnumber.data?.success){
+          setStudentCount(studentnumber.data.data.count);
         }
       } catch (error) {
         console.error("Error fetching stats:", error);
@@ -29,47 +31,41 @@ const StatsSection = () => {
   const statsData = [
     {
       title: "Active Complaints",
-      value: <AnimatedCounter target="5"/>, // Static for now
-      icon: "⚠️",
-      iconBg: "bg-orange-100 dark:bg-orange-900/30",
-      iconColor: "text-orange-600 dark:text-orange-400"
+      value: <AnimatedCounter target="5"/>, 
+      icon: <AlertTriangle className="text-orange-500" size={26} />,
+      iconBg: "bg-orange-50 dark:bg-orange-950/20",
     },
     {
-      title: " Resolved Complaints",
-      value: <AnimatedCounter target="10"/>, // Static for now
-      icon: "✅",
-      iconBg: "bg-green-100 dark:bg-green-900/30",
-      iconColor: "text-green-600 dark:text-green-400"
+      title: "Resolved Complaints",
+      value: <AnimatedCounter target="10"/>, 
+      icon: <CheckCircle2 className="text-emerald-500" size={26} />,
+      iconBg: "bg-emerald-50 dark:bg-emerald-950/20",
     },
     {
       title: "Number of Hostels",
-      // 3. HERE IS THE CHANGE: Pass the Component instead of a string
       value: <AnimatedCounter target={hostelCount}/>, 
-      icon: "🏢",
-      iconBg: "bg-blue-100 dark:bg-blue-900/30",
-      iconColor: "text-blue-600 dark:text-blue-400"
+      icon: <Building2 className="text-blue-500" size={26} />,
+      iconBg: "bg-blue-50 dark:bg-blue-950/20",
     },
     {
       title: "Number of Students",
-      value: <AnimatedCounter target="99"/>, // You can replicate the logic for students later
-      icon: "👥",
-      iconBg: "bg-purple-100 dark:bg-purple-900/30",
-      iconColor: "text-purple-600 dark:texst-purple-400"
+      value: <AnimatedCounter target={studentCount}/>, 
+      icon: <Users className="text-purple-500" size={26} />,
+      iconBg: "bg-purple-50 dark:bg-purple-950/20",
     }
   ];
 
   return (
-    <div className="w-full px-6 py-12">
+    <div className="w-full px-6 py-8 bg-white dark:bg-gray-900 transition-colors duration-300">
       <div className="max-w-7xl mx-auto">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {statsData.map((stat, index) => (
             <StatsCard
               key={index}
               title={stat.title}
-              value={stat.value} // React renders the <AnimatedCounter /> here perfectly
+              value={stat.value}
               icon={stat.icon}
               iconBg={stat.iconBg}
-              iconColor={stat.iconColor}
             />
           ))}
         </div>

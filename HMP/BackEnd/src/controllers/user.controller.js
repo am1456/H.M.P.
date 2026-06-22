@@ -33,7 +33,7 @@ const generateAccessTokenAndRefreshToken = async (userID) => {
 
 const new_generateAccessTokenAndRefreshToken = async (userId, Model) => {
     try {
-        const user = await Model.findById(userId); // Use the passed Model (User or Staff)
+        const user = await User.findById(userId); 
         const accessToken = user.generateAccessToken();
         const refreshToken = user.generateRefreshToken();
 

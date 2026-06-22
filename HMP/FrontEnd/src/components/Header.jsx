@@ -11,7 +11,7 @@ const Header = () => {
   };
 
   return (
-    <header className="sticky top-0 z-50 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 transition-colors duration-300">
+    <header className="sticky top-0 z-50 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-b border-gray-200/80 dark:border-gray-800/80 transition-colors duration-300">
       <div className="w-full px-6 py-4 flex justify-between items-center">
 
         {/* Left Section */}

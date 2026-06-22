@@ -334,6 +334,14 @@ const getCurrentStudentProfile = AsyncHandler(async (req, res) => {
     );
 });
 
+const getAllStudentCount = AsyncHandler(async(req, res) => {
+    const count = await User.countDocuments({role: 'student'});
+
+    return res.status(200).json(
+        new ApiResponse(200, {count}, "Count fetched successfully")
+    )
+});
+
 
 
 export {
@@ -344,5 +352,6 @@ export {
     deleteComplaint,
     getStudentComplaints,
     getStudentDashboardStats,
-    getCurrentStudentProfile
+    getCurrentStudentProfile,
+    getAllStudentCount
 };
