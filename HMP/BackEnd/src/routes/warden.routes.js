@@ -8,7 +8,8 @@ import {
     getWardenComplainList,
     getStudentListForWarden,
     getStudentDetail,
-    createNotice
+    createNotice,
+    deleteNotice
 } from "../controllers/warden.controller.js";
 import { getAllNotices } from "../controllers/notice.controller.js";
 import { verifyJWT } from "../middlewares/authentication.middleware.js";
@@ -24,5 +25,6 @@ wardenRouter.route("/students").get(verifyJWT, requireWarden, getStudentListForW
 wardenRouter.route("/student/:studentId").get(verifyJWT, requireWarden, getStudentDetail);
 wardenRouter.route("/notice/createNotice").post(verifyJWT, requireWarden, createNotice);
 wardenRouter.route("/notice/viewNotices").get(verifyJWT, getAllNotices);
+wardenRouter.route("/notice/deleteNotice/:noticeId").delete(verifyJWT, requireWarden, deleteNotice);
 
 export default wardenRouter;

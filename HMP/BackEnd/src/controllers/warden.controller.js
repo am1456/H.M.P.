@@ -311,11 +311,30 @@ const createNotice = AsyncHandler(async (req, res) => {
     
 })
 
+const deleteNotice = AsyncHandler( async (req, res) => {
+    const { noticeId } = req.params;
+
+    const notice = await Notice.findOne({ _id: noticeId });
+
+    if(!notice)
+        throw new ApiError(404, "Notice not found");
+
+    if(notice.hostel.toString() !== req.user.hostel.toString())
+        throw new ApiError(403, "Unauthorised to delete this notice");
+
+    await Notice.findByIdAndDelete(noticeId);
+
+    return res.status(200).json(
+        new ApiResponse(200, {}, "Notice deleted successfully")
+    );
+})
+
 
 export {
     createStaff,
     getWardenComplainList,
     getStudentListForWarden,
     getStudentDetail,
-    createNotice
+    createNotice,
+    deleteNotice
 };

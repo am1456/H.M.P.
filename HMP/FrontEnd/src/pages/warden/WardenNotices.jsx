@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Bell, Calendar, User, Plus } from "lucide-react";
+import { Bell, Calendar, User, Plus, Trash2 } from "lucide-react";
 import apiClient from "@/api/axios";
 import { useNavigate } from "react-router-dom";
 
@@ -8,6 +8,7 @@ import { useNavigate } from "react-router-dom";
 const WardenNotices = () => {
   const [notices, setNotices] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [deletingId, setDeletingId] = useState(null);
 
   const navigate = useNavigate();
 
@@ -21,6 +22,37 @@ const WardenNotices = () => {
       setLoading(false);
     }
   };
+
+  const handleDeleteNotice = async (noticeId) => {
+  const confirmed = window.confirm(
+    "Are you sure you want to delete this notice?"
+  );
+
+  if (!confirmed) return;
+
+  try {
+    setDeletingId(noticeId);
+
+    await apiClient.delete(
+      `/api/v1/warden/notice/deleteNotice/${noticeId}`
+    );
+
+    setNotices((prevNotices) =>
+      prevNotices.filter((notice) => notice._id !== noticeId)
+    );
+
+    alert("Notice deleted successfully");
+  } catch (error) {
+    console.error("Failed to delete notice", error);
+
+    alert(
+      error?.response?.data?.message ||
+      "Failed to delete notice"
+    );
+  } finally {
+    setDeletingId(null);
+  }
+};
 
   useEffect(() => {
     fetchNotices();
@@ -82,28 +114,40 @@ const WardenNotices = () => {
               className="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-all"
             >
               <div className="flex justify-between items-start gap-4 mb-3">
-                <h2 className="text-xl font-bold text-gray-800">
-                  {notice.title}
-                </h2>
 
-                <div className="flex items-center text-xs text-gray-400">
-                  <Calendar size={12} className="mr-1" />
-                  {new Date(notice.createdAt).toLocaleDateString("en-GB")}
-                </div>
-              </div>
+  <h2 className="text-xl font-bold text-gray-800">
+    {notice.title}
+  </h2>
 
-              <p className="text-gray-600 leading-relaxed mb-4">
-                {notice.description}
-              </p>
+  <div className="flex items-center gap-3">
 
-              <div className="flex items-center text-sm text-gray-500">
-                <User size={14} className="mr-2" />
-                Issued by: {notice.issuedBy?.fullName}
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
+    <div className="flex items-center text-xs text-gray-400">
+      <Calendar size={12} className="mr-1" />
+      {new Date(notice.createdAt).toLocaleDateString("en-GB")}
+    </div>
+
+    <button
+      onClick={() => handleDeleteNotice(notice._id)}
+      disabled={deletingId === notice._id}
+      className="text-red-500 hover:text-red-700 transition-colors disabled:opacity-50"
+      title="Delete Notice"
+    >
+      <Trash2 size={18} />
+    </button>
+   </div>
+  </div>
+    <p className="text-gray-600 leading-relaxed mb-4">
+      {notice.description}
+    </p>
+
+    <div className="flex items-center text-sm text-gray-500">
+        <User size={14} className="mr-2" />
+            Issued by: {notice.issuedBy?.fullName}
+      </div>
+      </div>
+    ))}
+    </div>
+    )}
     </div>
   );
 };
