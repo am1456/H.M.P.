@@ -12,9 +12,9 @@ import {
     getStudentComplaints,
     getStudentDashboardStats,
     getCurrentStudentProfile,
-    getAllStudentCount
+    getAllStudentCount,
 } from "../controllers/student.controller.js";
-import { getAllNotices } from "../controllers/notice.controller.js";
+import { getAllNotices, markNoticeAsRead } from "../controllers/notice.controller.js";
 import { verifyJWT } from "../middlewares/authentication.middleware.js";
 import { requireStudent } from "../middlewares/authorize.middleware.js";
 
@@ -33,6 +33,7 @@ studentRouter.route("/dashboard-stats").get(verifyJWT, requireStudent, getStuden
 studentRouter.route("/profile").get(verifyJWT, requireStudent, getCurrentStudentProfile);
 studentRouter.route("/notice/viewNotices").get(verifyJWT, getAllNotices);
 studentRouter.route("/student-count").get(getAllStudentCount);
+studentRouter.route("/notice/markRead").patch(verifyJWT, requireStudent, markNoticeAsRead);
 
 
 export default studentRouter;

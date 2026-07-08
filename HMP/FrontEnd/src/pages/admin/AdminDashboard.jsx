@@ -50,7 +50,6 @@ const AdminDashboard = () => {
       title: "Infrastructure",
       items: [
         { to: "add-hostel", label: "Add Hostel", icon: <Building size={20} /> },
-        { to: "add-rooms", label: "Add Rooms", icon: <PlusCircle size={20} /> },
       ],
     },
   ];

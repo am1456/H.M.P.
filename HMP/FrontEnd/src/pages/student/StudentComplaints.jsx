@@ -48,7 +48,7 @@ const StudentComplaints = () => {
     try {
       await apiClient.delete(`/api/v1/student/delete-complaint/${id}`);
       // Remove from UI
-      setComplaints(prev => prev.filter(c => c._id !== id));
+      setComplaints(prev => prev.filter((c) => (c._id !== id)));
     } catch (error) {
       alert(error.response?.data?.message || "Cannot delete this complaint");
     }

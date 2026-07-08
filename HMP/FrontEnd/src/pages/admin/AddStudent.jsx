@@ -24,7 +24,7 @@ const AddStudent = () => {
     const [filteredRooms, setFilteredRooms] = useState([]);   // List shown in dropdown
     const [roomSearch, setRoomSearch] = useState("");         // What's typed in the room input
     const [loading, setLoading] = useState(false);            // Form submission state
-    const [message, setMessage] = useState({ type: '', text: '' }); // Success/error message
+    const [pageLoading, setPageLoading] = useState(true);
 
     const { register, handleSubmit, watch, reset, setValue, formState: { errors } } = useForm({
         defaultValues: {
@@ -43,6 +43,8 @@ const AddStudent = () => {
                 if (res.data.success) setHostels(res.data.data);
             } catch (error) {
                 console.error("Failed to fetch hostels", error);
+            } finally {
+                setPageLoading(false);
             }
         };
         fetchHostels();
@@ -97,27 +99,39 @@ const AddStudent = () => {
 
     const onSubmit = async (data) => {
         setLoading(true);
-        setMessage({ type: '', text: '' });
+
         try {
             const response = await apiClient.post('/api/v1/admin/create-student', data);
+
             if (response.data.success) {
-                setMessage({ type: 'success', text: "Student enrollment successful!" });
+                window.alert("Student added successful!");
                 reset();
                 setRoomSearch("");
-                setTimeout(() => navigate('/admin/dashboard/add-student'), 2000);
+                navigate('/admin/dashboard/add-student');
+            } else {
+                window.alert("Something went wrong!");
             }
+
         } catch (error) {
-            setMessage({ 
-                type: 'error', 
-                text: error.response?.data?.message || "Enrollment failed" 
-            });
+            window.alert(
+                error.response?.data?.message || "Enrollment failed"
+            );
         } finally {
             setLoading(false);
         }
     };
 
+    if (pageLoading) {
+        return (
+            <div className="h-full flex items-center justify-center text-red-600">
+                <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-red-600 mr-3"></div>
+                Loading Student Registration Data...
+            </div>
+        );
+    }
+
     return (
-        <div className="max-w-4xl mx-auto p-4 animate-in fade-in slide-in-from-bottom-6 duration-700">
+        <div className="max-w-2xl mx-auto p-4 animate-in fade-in duration-500">
             <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl overflow-hidden border border-gray-100 dark:border-gray-700">
                 
                 {/* Header - Emerald/Green Theme */}
@@ -132,18 +146,6 @@ const AddStudent = () => {
                     </div>
                     <UserPlus size={120} className="absolute -right-4 -top-4 text-white opacity-10 rotate-12" />
                 </div>
-
-                {/* Status Message */}
-                {message.text && (
-                    <div className={`mx-8 mt-6 p-4 rounded-xl flex items-center gap-3 animate-in zoom-in-95 duration-300 ${
-                        message.type === 'success' 
-                        ? 'bg-green-50 text-green-700 border border-green-200' 
-                        : 'bg-red-50 text-red-700 border border-red-200'
-                    }`}>
-                        <div className={`w-2 h-2 rounded-full ${message.type === 'success' ? 'bg-green-500' : 'bg-red-500'}`} />
-                        <span className="font-medium text-sm">{message.text}</span>
-                    </div>
-                )}
 
                 <form onSubmit={handleSubmit(onSubmit)} className="p-8 space-y-6">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
@@ -160,6 +162,9 @@ const AddStudent = () => {
                                     errors.fullName ? 'border-red-400 focus:border-red-500' : 'border-transparent focus:border-emerald-600'
                                 }`}
                             />
+                            {errors.fullName && (
+                                <p className="text-red-500 text-xs mt-1">{errors.fullName.message}</p>
+                            )}
                         </div>
 
                         {/* Username */}
@@ -174,6 +179,9 @@ const AddStudent = () => {
                                     errors.username ? 'border-red-400 focus:border-red-500' : 'border-transparent focus:border-emerald-600'
                                 }`}
                             />
+                            {errors.username && (
+                                <p className="text-red-500 text-xs mt-1">{errors.username.message}</p>
+                            )}
                         </div>
 
                         {/* Mobile */}
@@ -187,8 +195,13 @@ const AddStudent = () => {
                                     pattern: { value: /^[0-9]{10}$/, message: "10 digits required" }
                                 })}
                                 placeholder="10-digit mobile"
-                                className="w-full p-3.5 bg-gray-50 dark:bg-gray-900 border-2 rounded-xl border-transparent outline-none focus:border-emerald-600 transition-all dark:text-white"
+                                className={`w-full p-3.5 bg-gray-50 dark:bg-gray-900 border-2 rounded-xl outline-none transition-all dark:text-white ${
+                                    errors.mobile ? 'border-red-500' : 'border-transparent focus:border-emerald-600'
+                                }`}
                             />
+                            {errors.mobile && (
+                                <p className="text-red-500 text-xs mt-1">{errors.mobile.message}</p>
+                            )}
                         </div>
 
                         {/* Email */}
@@ -202,6 +215,9 @@ const AddStudent = () => {
                                 placeholder="Enter the email address"
                                 className="w-full p-3.5 bg-gray-50 dark:bg-gray-900 border-2 rounded-xl border-transparent outline-none focus:border-emerald-600 transition-all dark:text-white"
                             />
+                            {errors.email && (
+                                <p className="text-red-500 text-xs mt-1">{errors.email.message}</p>
+                            )}
                         </div>
 
                         {/* Hostel Selection (Step 1) */}
@@ -218,6 +234,9 @@ const AddStudent = () => {
                                     <option key={h._id} value={h._id}>{h.name} ({h.code})</option>
                                 ))}
                             </select>
+                            {errors.hostel && (
+                                <p className="text-red-500 text-xs mt-1">{errors.hostel.message}</p>
+                            )}
                         </div>
 
                         {/* Smart Room Selector (Step 2: Search + Dropdown) */}
@@ -237,11 +256,13 @@ const AddStudent = () => {
                                 />
                                 <Search className="absolute right-3 top-4 text-gray-400" size={18} />
                                 
-                                {/* Hidden Field for Form Submission */}
                                 <input type="hidden" {...register("room", { required: "Room selection is required" })} />
                             </div>
 
-                            {/* Custom Cascading Dropdown */}
+                            {errors.room && (
+                                <p className="text-red-500 text-xs mt-1">{errors.room.message}</p>
+                            )}
+
                             {selectedHostelId && filteredRooms.length > 0 && roomSearch !== `Room ${filteredRooms[0]?.number}` && (
                                 <ul className="absolute z-50 w-full mt-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-2xl max-h-56 overflow-y-auto custom-scrollbar">
                                     {filteredRooms.map(room => (
@@ -277,6 +298,9 @@ const AddStudent = () => {
                                 placeholder="••••••••"
                                 className="w-full p-3.5 bg-gray-50 dark:bg-gray-900 border-2 rounded-xl border-transparent outline-none focus:border-emerald-600 transition-all dark:text-white"
                             />
+                            {errors.password && (
+                                <p className="text-red-500 text-xs mt-1">{errors.password.message}</p>
+                            )}
                         </div>
                     </div>
 
@@ -294,17 +318,11 @@ const AddStudent = () => {
                                     Processing...
                                 </>
                             ) : (
-                                "Finalize Enrollment"
+                                "Add Student"
                             )}
                         </button>
                     </div>
                 </form>
-
-                <div className="bg-gray-50 dark:bg-gray-900/50 p-4 text-center">
-                    <p className="text-[10px] text-gray-400 uppercase font-bold tracking-[0.2em]">
-                        Student Housing Agreement & Record Encryption Active
-                    </p>
-                </div>
             </div>
         </div>
     );

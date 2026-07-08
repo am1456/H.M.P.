@@ -53,6 +53,15 @@ const SearchUsers = () => {
     }
   };
 
+  if (loading) {
+    return (
+      <div className="h-full flex items-center justify-center text-red-600">
+        <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-red-600 mr-3"></div>
+        Loading Users...
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6 animate-in fade-in duration-500">
       {/* Header Area */}

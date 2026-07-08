@@ -1,2 +1,1 @@
-# H.M.P.
-A FULL STACK WEB DEVELOPMENT PROJECT BY ARPAN MANDAL & AYUSH ROY
+# College Hostel Management Project

@@ -5,7 +5,6 @@ import { ShieldCheck, Mail, Lock, Phone, UserPlus, ShieldAlert } from 'lucide-re
 
 const InviteAdmin = () => {
     const [loading, setLoading] = useState(false);
-    const [message, setMessage] = useState({ type: '', text: '' });
 
     const {
         register,
@@ -16,27 +15,26 @@ const InviteAdmin = () => {
 
     const onSubmit = async (data) => {
         setLoading(true);
-        setMessage({ type: '', text: '' });
 
         try {
             const response = await apiClient.post("/api/v1/admin/create-admin", data);
 
             if (response.data.success) {
-                setMessage({ type: 'success', text: "New Admin account has been activated successfully!" });
+                window.alert("Admin has created successfully");
                 reset();
+            } else {
+                window.alert("Something went wrong!");
             }
+
         } catch (err) {
-            setMessage({ 
-                type: 'error', 
-                text: err.response?.data?.message || "Failed to authorize new admin" 
-            });
+            window.alert(err.response?.data?.message || "Failed to authorize new admin");
         } finally {
             setLoading(false);
         }
     };
 
     return (
-        <div className="max-w-3xl mx-auto p-4 animate-in fade-in slide-in-from-bottom-6 duration-700">
+        <div className="max-w-2xl mx-auto p-4 animate-in fade-in duration-500">
             <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl overflow-hidden border border-gray-100 dark:border-gray-700">
                 
                 {/* Header Section */}
@@ -53,18 +51,6 @@ const InviteAdmin = () => {
                     <ShieldAlert size={120} className="absolute -right-4 -top-4 text-white opacity-10 rotate-12" />
                 </div>
 
-                {/* Status Message */}
-                {message.text && (
-                    <div className={`mx-8 mt-6 p-4 rounded-xl flex items-center gap-3 animate-in zoom-in-95 duration-300 ${
-                        message.type === 'success' 
-                        ? 'bg-green-50 text-green-700 border border-green-200' 
-                        : 'bg-red-50 text-red-700 border border-red-200'
-                    }`}>
-                        <div className={`w-2 h-2 rounded-full ${message.type === 'success' ? 'bg-green-500' : 'bg-red-500'}`} />
-                        <span className="font-medium text-sm">{message.text}</span>
-                    </div>
-                )}
-
                 <form onSubmit={handleSubmit(onSubmit)} className="p-8 space-y-6">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
                         
@@ -80,7 +66,9 @@ const InviteAdmin = () => {
                                     errors.fullName ? 'border-red-400 focus:border-red-500' : 'border-transparent focus:border-red-600'
                                 }`}
                             />
-                            {errors.fullName && <p className="text-red-500 text-xs mt-1 italic font-medium">{errors.fullName.message}</p>}
+                            {errors.fullName && (
+                                <p className="text-red-500 text-xs mt-1">{errors.fullName.message}</p>
+                            )}
                         </div>
 
                         {/* Username */}
@@ -95,7 +83,9 @@ const InviteAdmin = () => {
                                     errors.username ? 'border-red-400 focus:border-red-500' : 'border-transparent focus:border-red-600'
                                 }`}
                             />
-                            {errors.username && <p className="text-red-500 text-xs mt-1 italic">{errors.username.message}</p>}
+                            {errors.username && (
+                                <p className="text-red-500 text-xs mt-1">{errors.username.message}</p>
+                            )}
                         </div>
 
                         {/* Mobile */}
@@ -113,7 +103,9 @@ const InviteAdmin = () => {
                                     errors.mobile ? 'border-red-400 focus:border-red-500' : 'border-transparent focus:border-red-600'
                                 }`}
                             />
-                            {errors.mobile && <p className="text-red-500 text-xs mt-1 italic">{errors.mobile.message}</p>}
+                            {errors.mobile && (
+                                <p className="text-red-500 text-xs mt-1">{errors.mobile.message}</p>
+                            )}
                         </div>
 
                         {/* Email */}
@@ -131,7 +123,9 @@ const InviteAdmin = () => {
                                     errors.email ? 'border-red-400 focus:border-red-500' : 'border-transparent focus:border-red-600'
                                 }`}
                             />
-                            {errors.email && <p className="text-red-500 text-xs mt-1 italic">{errors.email.message}</p>}
+                            {errors.email && (
+                                <p className="text-red-500 text-xs mt-1">{errors.email.message}</p>
+                            )}
                         </div>
 
                         {/* Password */}
@@ -147,7 +141,9 @@ const InviteAdmin = () => {
                                     errors.password ? 'border-red-400 focus:border-red-500' : 'border-transparent focus:border-red-600'
                                 }`}
                             />
-                            {errors.password && <p className="text-red-500 text-xs mt-1 italic">{errors.password.message}</p>}
+                            {errors.password && (
+                                <p className="text-red-500 text-xs mt-1">{errors.password.message}</p>
+                            )}
                         </div>
                     </div>
 
@@ -163,17 +159,11 @@ const InviteAdmin = () => {
                                     Encrypting...
                                 </>
                             ) : (
-                                "Generate Admin Credentials"
+                                "Add Admin"
                             )}
                         </button>
                     </div>
                 </form>
-
-                <div className="bg-gray-50 dark:bg-gray-900/50 p-4 text-center">
-                    <p className="text-[10px] text-gray-400 uppercase font-bold tracking-[0.2em]">
-                        System Log: Admin creation event will be recorded
-                    </p>
-                </div>
             </div>
         </div>
     );

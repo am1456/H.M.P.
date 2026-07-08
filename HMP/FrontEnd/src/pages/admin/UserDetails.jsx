@@ -74,7 +74,14 @@ const UserDetails = () => {
         }
     };
 
-    if (loading) return <div className="p-20 text-center font-bold animate-pulse text-gray-400">LOADING AUTHORIZED PROFILE...</div>;
+    if (loading) {
+        return (
+            <div className="h-full flex items-center justify-center text-red-600">
+                <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-red-600 mr-3"></div>
+                Loading User Details...
+            </div>
+        );
+    }
     if (!user) return <div className="p-20 text-center text-red-500 font-bold">USER NOT FOUND</div>;
 
     const themeColor =  user.role === 'warden' ? 'purple' : 'emerald';

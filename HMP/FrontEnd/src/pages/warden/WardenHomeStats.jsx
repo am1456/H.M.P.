@@ -7,6 +7,7 @@ import {
 } from "lucide-react";
 import apiClient from "@/api/axios";
 import { logout } from "@/store/authSlice"; 
+import WardenDailyChart from "./WardenDailyChart";
 
 const WardenHomeStats = () => {
   const navigate = useNavigate();
@@ -30,6 +31,15 @@ const WardenHomeStats = () => {
     };
     fetchStats();
   }, []);
+
+  if (loading) {
+    return (
+      <div className="h-full flex items-center justify-center text-purple-600">
+        <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-purple-600 mr-3"></div>
+        Loading Dashboard Stats...
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6 animate-in fade-in duration-500">
@@ -87,18 +97,15 @@ const WardenHomeStats = () => {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         
-        {/* 3. CHART PLACEHOLDER (Just a Big Div as requested) */}
-        <div className="lg:col-span-2 bg-white rounded-2xl shadow-sm border border-gray-100 p-6 flex flex-col">
+        {/* 3. CHART CONTAINER */}
+        <div className="lg:col-span-2 bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 p-6 flex flex-col hover:shadow-md transition-shadow duration-300">
           <div className="flex justify-between items-center mb-6">
-            <h3 className="font-bold text-gray-800 text-lg flex items-center gap-2">
-              <BarChart3 size={20} className="text-purple-600"/> Monthly Breakdown
+            <h3 className="font-bold text-gray-800 dark:text-gray-100 text-lg flex items-center gap-2">
+              <BarChart3 size={20} className="text-purple-600 dark:text-purple-400"/> Daily Complaints (Present Month)
             </h3>
           </div>
           
-          {/* THE BIG EMPTY DIV */}
-          <div className="flex-1 bg-gray-50 rounded-xl border-2 border-dashed border-gray-200 min-h-62.5">
-             {/* Absolutely nothing inside, just structure */}
-          </div>
+          <WardenDailyChart />
         </div>
 
         {/* 4. QUICK ACTIONS (Security) */}

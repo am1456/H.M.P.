@@ -23,7 +23,12 @@ const noticeSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Hostel',
         required: true
-    }
+    },
+    readBy: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        default: []
+    }]
 },  {timestamps: true});
 
 export const Notice = mongoose.model('Notice', noticeSchema);

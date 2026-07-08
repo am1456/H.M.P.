@@ -8,7 +8,7 @@ const AddWarden = () => {
     const navigate = useNavigate();
     const [hostels, setHostels] = useState([]);
     const [loading, setLoading] = useState(false);
-    const [message, setMessage] = useState({ type: '', text: '' });
+    const [pageLoading, setPageLoading] = useState(true);
 
     const { register, handleSubmit, reset, formState: { errors } } = useForm({
         defaultValues: { role: "warden" }
@@ -21,6 +21,8 @@ const AddWarden = () => {
                 if (res.data.success) setHostels(res.data.data);
             } catch (error) {
                 console.error("Failed to fetch hostels", error);
+            } finally {
+                setPageLoading(false);
             }
         };
         fetchHostels();
@@ -28,26 +30,36 @@ const AddWarden = () => {
 
     const onSubmit = async (data) => {
         setLoading(true);
-        setMessage({ type: '', text: '' });
+
         try {
             const response = await apiClient.post('/api/v1/admin/create-warden', data);
+
             if (response.data.success) {
-                setMessage({ type: 'success', text: "Warden account has been activated successfully!" });
+                window.alert("Warden has created successfully");
                 reset();
-                setTimeout(() => navigate('/admin/dashboard/add-warden'), 2000);
+                navigate('/admin/dashboard/add-warden');
+            } else {
+                window.alert("Something went wrong!");
             }
+
         } catch (error) {
-            setMessage({ 
-                type: 'error', 
-                text: error.response?.data?.message || "Registration failed" 
-            });
+            window.alert(error.response?.data?.message || "Registration failed");
         } finally {
             setLoading(false);
         }
     };
 
+    if (pageLoading) {
+        return (
+            <div className="h-full flex items-center justify-center text-red-600">
+                <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-red-600 mr-3"></div>
+                Loading Warden Registration Data...
+            </div>
+        );
+    }
+
     return (
-        <div className="max-w-3xl mx-auto p-4 animate-in fade-in slide-in-from-bottom-6 duration-700">
+        <div className="max-w-2xl mx-auto p-4 animate-in fade-in duration-500">
             <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl overflow-hidden border border-gray-100 dark:border-gray-700">
                 
                 {/* Header Section - Deep Purple/Violet Gradient */}
@@ -64,18 +76,6 @@ const AddWarden = () => {
                     <Building2 size={120} className="absolute -right-4 -top-4 text-white opacity-10 rotate-12" />
                 </div>
 
-                {/* Status Message */}
-                {message.text && (
-                    <div className={`mx-8 mt-6 p-4 rounded-xl flex items-center gap-3 animate-in zoom-in-95 duration-300 ${
-                        message.type === 'success' 
-                        ? 'bg-green-50 text-green-700 border border-green-200' 
-                        : 'bg-red-50 text-red-700 border border-red-200'
-                    }`}>
-                        <div className={`w-2 h-2 rounded-full ${message.type === 'success' ? 'bg-green-500' : 'bg-red-500'}`} />
-                        <span className="font-medium text-sm">{message.text}</span>
-                    </div>
-                )}
-
                 <form onSubmit={handleSubmit(onSubmit)} className="p-8 space-y-6">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
                         
@@ -91,7 +91,11 @@ const AddWarden = () => {
                                     errors.fullName ? 'border-red-400 focus:border-red-500' : 'border-transparent focus:border-purple-600'
                                 }`}
                             />
-                            {errors.fullName && <p className="text-red-500 text-xs mt-1 italic font-medium">{errors.fullName.message}</p>}
+                            {errors.fullName && (
+                                <p className="text-red-500 text-xs mt-1 italic font-medium">
+                                    {errors.fullName.message}
+                                </p>
+                            )}
                         </div>
 
                         {/* Username */}
@@ -106,7 +110,11 @@ const AddWarden = () => {
                                     errors.username ? 'border-red-400 focus:border-red-500' : 'border-transparent focus:border-purple-600'
                                 }`}
                             />
-                            {errors.username && <p className="text-red-500 text-xs mt-1 italic">{errors.username.message}</p>}
+                            {errors.username && (
+                                <p className="text-red-500 text-xs mt-1 italic">
+                                    {errors.username.message}
+                                </p>
+                            )}
                         </div>
 
                         {/* Mobile */}
@@ -124,13 +132,17 @@ const AddWarden = () => {
                                     errors.mobile ? 'border-red-400 focus:border-red-500' : 'border-transparent focus:border-purple-600'
                                 }`}
                             />
-                            {errors.mobile && <p className="text-red-500 text-xs mt-1 italic">{errors.mobile.message}</p>}
+                            {errors.mobile && (
+                                <p className="text-red-500 text-xs mt-1 italic">
+                                    {errors.mobile.message}
+                                </p>
+                            )}
                         </div>
 
                         {/* Email */}
                         <div className="group">
                             <label className="flex items-center gap-2 text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2 group-focus-within:text-purple-600">
-                                <Mail size={14} />Email
+                                <Mail size={14} /> Email
                             </label>
                             <input 
                                 {...register("email", { 
@@ -142,7 +154,11 @@ const AddWarden = () => {
                                     errors.email ? 'border-red-400 focus:border-red-500' : 'border-transparent focus:border-purple-600'
                                 }`}
                             />
-                            {errors.email && <p className="text-red-500 text-xs mt-1 italic">{errors.email.message}</p>}
+                            {errors.email && (
+                                <p className="text-red-500 text-xs mt-1 italic">
+                                    {errors.email.message}
+                                </p>
+                            )}
                         </div>
 
                         {/* Assigned Hostel */}
@@ -158,10 +174,16 @@ const AddWarden = () => {
                             >
                                 <option value="">-- Assign Hostel --</option>
                                 {hostels.map((h) => (
-                                    <option key={h._id} value={h._id}>{h.name} ({h.code})</option>
+                                    <option key={h._id} value={h._id}>
+                                        {h.name} ({h.code})
+                                    </option>
                                 ))}
                             </select>
-                            {errors.hostel && <p className="text-red-500 text-xs mt-1 italic">{errors.hostel.message}</p>}
+                            {errors.hostel && (
+                                <p className="text-red-500 text-xs mt-1 italic">
+                                    {errors.hostel.message}
+                                </p>
+                            )}
                         </div>
 
                         {/* Password */}
@@ -177,7 +199,11 @@ const AddWarden = () => {
                                     errors.password ? 'border-red-400 focus:border-red-500' : 'border-transparent focus:border-purple-600'
                                 }`}
                             />
-                            {errors.password && <p className="text-red-500 text-xs mt-1 italic">{errors.password.message}</p>}
+                            {errors.password && (
+                                <p className="text-red-500 text-xs mt-1 italic">
+                                    {errors.password.message}
+                                </p>
+                            )}
                         </div>
                     </div>
 
@@ -195,17 +221,11 @@ const AddWarden = () => {
                                     Finalizing...
                                 </>
                             ) : (
-                                "Confirm Warden Authority"
+                                "Add Warden"
                             )}
                         </button>
                     </div>
                 </form>
-
-                <div className="bg-gray-50 dark:bg-gray-900/50 p-4 text-center">
-                    <p className="text-[10px] text-gray-400 uppercase font-bold tracking-[0.2em]">
-                        Administrative Record: Warden Authorization Protocol
-                    </p>
-                </div>
             </div>
         </div>
     );

@@ -9,6 +9,7 @@ const AddRooms = () => {
     const [hostels, setHostels] = useState([]);
     const [lastRoomMsg, setLastRoomMsg] = useState(null); // To store the hint text
     const [loading, setLoading] = useState(false);
+    const [pageLoading, setPageLoading] = useState(true);
 
     const { register, handleSubmit, watch, setValue, formState: { errors }, reset } = useForm();
     
@@ -18,8 +19,14 @@ const AddRooms = () => {
     // 1. Fetch Hostels on Load for Dropdown
     useEffect(() => {
         const fetchHostels = async () => {
-            const res = await apiClient.get('/api/v1/hostel/get-all-hostels');
-            if (res.data.success) setHostels(res.data.data);
+            try {
+                const res = await apiClient.get('/api/v1/hostel/get-all-hostels');
+                if (res.data.success) setHostels(res.data.data);
+            } catch (error) {
+                console.error('Could not fetch hostels');
+            } finally {
+                setPageLoading(false);
+            }
         };
         fetchHostels();
     }, []);
@@ -66,6 +73,15 @@ const AddRooms = () => {
             setLoading(false);
         }
     };
+
+    if (pageLoading) {
+        return (
+            <div className="h-full flex items-center justify-center text-red-600">
+                <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-red-600 mr-3"></div>
+                Loading Hostels...
+            </div>
+        );
+    }
 
     return (
         <div className="max-w-xl mx-auto p-6 animate-in slide-in-from-right-8 duration-500">

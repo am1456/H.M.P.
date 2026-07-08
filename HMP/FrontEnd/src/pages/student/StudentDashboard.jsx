@@ -4,6 +4,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { setProfileStatus } from "@/store/authSlice";
 import apiClient from "@/api/axios";
 import DashboardLayout from "@/components/DashboardLayout";
+import Preloader from "@/components/Preloader";
 import { 
   Home,
   AlertCircle,
@@ -37,9 +38,7 @@ const StudentDashboard = () => {
   }, [dispatch]);
 
   if (checkingStatus) return (
-    <div className="h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-950 text-emerald-600 dark:text-emerald-400">
-      <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-current"></div>
-    </div>
+    <Preloader text="Verifying Profile..." />
   );
 
   const showOverlay = !isProfileComplete && !isProfilePage;

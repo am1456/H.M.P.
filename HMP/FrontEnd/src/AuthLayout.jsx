@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
+import Preloader from '@/components/Preloader'
 
 export default function AuthLayout({
     children,
@@ -39,5 +40,5 @@ export default function AuthLayout({
         setLoader(false);
     }, [authStatus, navigate, authentication, userData, JSON.stringify(allowedRoles)])
 
-    return loader ? <div className="h-screen flex items-center justify-center text-red-600 font-bold">Verifying...</div> : <>{children}</>
+    return loader ? <Preloader text="Verifying..." /> : <>{children}</>
 }

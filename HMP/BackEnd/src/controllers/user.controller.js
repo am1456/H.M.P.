@@ -65,7 +65,7 @@ const loginUser = AsyncHandler(async (req, res) => {
     const { accessToken, refreshToken } = await generateAccessTokenAndRefreshToken(user._id)
     const loggedInUser = await User.findById(user._id).select("-password -refreshToken")
 
-    // 👇 SMART COOKIE SETTINGS (Works for Localhost & Render)
+    // SMART COOKIE SETTINGS (Works for Localhost & Render)
     const isProduction = process.env.NODE_ENV === "production";
 
     const options = {

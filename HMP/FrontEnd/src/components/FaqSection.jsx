@@ -72,7 +72,7 @@ const FaqSection = () => {
                     isOpen ? 'max-h-60 border-t border-gray-100 dark:border-gray-700/50' : 'max-h-0'
                   }`}
                 >
-                  <p className="p-6 text-gray-600 dark:text-gray-350 leading-relaxed text-sm bg-gray-50/50 dark:bg-gray-800/30">
+                  <p className="p-6 text-gray-600 dark:text-gray-200 leading-relaxed text-sm bg-gray-50/50 dark:bg-gray-800/30">
                     {faq.answer}
                   </p>
                 </div>

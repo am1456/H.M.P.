@@ -8,6 +8,7 @@ import { User } from "../models/user.model.js";
 import mongoose from "mongoose";
 import { uploadOnCloudinary } from "../utilities/cloudinary.js";
 
+
 const createStaff = AsyncHandler(async (req, res) => {
     const { phone, fullName, roles, pin } = req.body;
 
@@ -49,30 +50,31 @@ const createStaff = AsyncHandler(async (req, res) => {
 
 const getWardenComplainList = AsyncHandler(async (req, res) => {
     const { status, role, search } = req.query;
-    // 1. SAFETY CHECK: Does the Warden have a hostel?
+
     if (!req.user.hostel) {
         return res.status(200).json(
-            new ApiResponse(200, [], "Warden is not assigned to any hostel yet.")
+            new ApiResponse(
+                200,
+                [],
+                "Warden is not assigned to any hostel yet."
+            )
         );
     }
 
-    // 2. SAFE CONVERSION: Ensure ID is an ObjectId
-    // req.user.hostel might be a String or an Object, we force it to String then ObjectId
-    const wardenHostelId = new mongoose.Types.ObjectId(String(req.user.hostel));
-
     const complaints = await Complaint.aggregate([
-        // A. Match Hostel (Strict Type Check)
+        // Match complaints belonging to the warden's hostel
         {
             $match: {
-                hostel: wardenHostelId
+                hostel: req.user.hostel
             }
         },
 
-        // B. Filters (Only apply if they exist)
+        // Optional filters
         ...(status && status !== "ALL" ? [{ $match: { statusbyStudent: status } }] : []),
+
         ...(role && role !== "ALL" ? [{ $match: { assignedRole: role } }] : []),
 
-        // C. Lookups (Get Student & Room details)
+        // Get student details
         {
             $lookup: {
                 from: "users",
@@ -81,6 +83,8 @@ const getWardenComplainList = AsyncHandler(async (req, res) => {
                 as: "studentDoc"
             }
         },
+
+        // Get room details
         {
             $lookup: {
                 from: "rooms",
@@ -90,76 +94,78 @@ const getWardenComplainList = AsyncHandler(async (req, res) => {
             }
         },
 
-        // D. Flatten Fields (Make them easy to read)
+        // Flatten lookup results
         {
             $addFields: {
-                studentName: { $arrayElemAt: ["$studentDoc.fullName", 0] },
-                enrollmentNo: { $arrayElemAt: ["$studentDoc.username", 0] },
-                // Handle case where room might be missing/deleted
-                roomNumber: { $ifNull: [{ $arrayElemAt: ["$roomDoc.number", 0] }, "N/A"] }
+                studentName: {
+                    $arrayElemAt: ["$studentDoc.fullName", 0]
+                },
+                enrollmentNo: {
+                    $arrayElemAt: ["$studentDoc.username", 0]
+                },
+                roomNumber: {
+                    $ifNull: [
+                        { $arrayElemAt: ["$roomDoc.number", 0] },
+                        "N/A"
+                    ]
+                }
             }
         },
 
-        // E. Search (Optional)
-        ...(search ? [{
-            $match: {
-                $or: [
-                    { studentName: { $regex: search, $options: "i" } },
-                    { enrollmentNo: { $regex: search, $options: "i" } },
-                    { title: { $regex: search, $options: "i" } }
-                ]
-            }
-        }] : []),
+        // Search filter
+        ...(search ? 
+            [{ $match: { 
+                $or: [ 
+                    { studentName: { $regex: search, $options: "i" } }, 
+                    { enrollmentNo: { $regex: search, $options: "i" } }, 
+                    { title: { $regex: search, $options: "i" } } ] } }
+                ] : []),
 
-        // F. Sort Newest First
-        { $sort: { createdAt: -1 } }
+        // Newest complaints first
+        {
+            $sort: {
+                createdAt: -1
+            }
+        }
     ]);
 
     return res.status(200).json(
-        new ApiResponse(200, complaints, "Data fetched successfully")
+        new ApiResponse(
+            200,
+            complaints,
+            "Data fetched successfully"
+        )
     );
 });
 
 const getStudentListForWarden = AsyncHandler(async (req, res) => {
-    const { search, page = 1, limit = 10, hasChronicDisease } = req.query;
-    const wardenHostelId = req.user.hostel;
+    const { search, hasChronicDisease } = req.query;
 
-    const pageNum = parseInt(page);
-    const limitNum = parseInt(limit);
-    const skip = (pageNum - 1) * limitNum;
+    const filterConditions = [];
 
-    // Build dynamic match conditions
-    const dynamicMatchConditions = [];
-
-    // Add search condition
     if (search) {
-        dynamicMatchConditions.push({
+        filterConditions.push({
             $or: [
                 { fullName: { $regex: search, $options: "i" } },
                 { username: { $regex: search, $options: "i" } },
-                { "roomData.roomNumber": { $regex: search, $options: "i" } }
+                { "roomData.number": { $regex: search, $options: "i" } }
             ]
         });
     }
 
-    // Add chronic disease filter
     if (hasChronicDisease !== undefined) {
-        // Convert query string to boolean
-        const hasDiseaseBoolean = hasChronicDisease === 'true' || hasChronicDisease === true;
-        dynamicMatchConditions.push({
-            "profile.hasChronicDisease": hasDiseaseBoolean
+        filterConditions.push({
+            "profile.hasChronicDisease": hasChronicDisease === "true"
         });
     }
 
     const students = await User.aggregate([
-        // 1. Filter: Only students in this Warden's hostel
         {
             $match: {
-                hostel: new mongoose.Types.ObjectId(wardenHostelId),
+                hostel: new mongoose.Types.ObjectId(req.user.hostel),
                 role: "student"
             }
         },
-        // 2. Join with Room
         {
             $lookup: {
                 from: "rooms",
@@ -168,7 +174,6 @@ const getStudentListForWarden = AsyncHandler(async (req, res) => {
                 as: "roomData"
             }
         },
-        // 3. Join with StudentProfile
         {
             $lookup: {
                 from: "studentprofiles",
@@ -177,58 +182,29 @@ const getStudentListForWarden = AsyncHandler(async (req, res) => {
                 as: "profile"
             }
         },
-        // 4. Convert arrays to objects
         {
             $addFields: {
                 roomData: { $arrayElemAt: ["$roomData", 0] },
                 profile: { $arrayElemAt: ["$profile", 0] }
             }
         },
-        // 5. Apply dynamic filters (only if conditions exist)
-        ...(dynamicMatchConditions.length > 0 ? [{
-            $match: {
-                $and: dynamicMatchConditions
-            }
-        }] : []),
-        // 6. Count total and paginate
+        ...(filterConditions.length > 0 ? [{ $match: { $and: filterConditions } }] : []),
         {
-            $facet: {
-                metadata: [{ $count: "total" }],
-                data: [
-                    { $skip: skip },
-                    { $limit: limitNum },
-                    {
-                        $project: {
-                            _id: 1,
-                            fullName: 1,
-                            username: 1,
-                            email: 1,
-                            phoneNumber: 1,
-                            roomNumber: "$roomData.roomNumber",
-                            hasChronicDisease: "$profile.hasChronicDisease",
-                            createdAt: 1
-                        }
-                    }
-                ]
+            $project: {
+                _id: 1,
+                fullName: 1,
+                username: 1,
+                email: 1,
+                phoneNumber: 1,
+                roomNumber: "$roomData.number",
+                hasChronicDisease: "$profile.hasChronicDisease",
+                createdAt: 1
             }
         }
     ]);
 
-    const total = students[0]?.metadata[0]?.total || 0;
-    const studentList = students[0]?.data || [];
-
     return res.status(200).json(
-        new ApiResponse(200, {
-            students: studentList,
-            pagination: {
-                currentPage: pageNum,
-                totalPages: Math.ceil(total / limitNum),
-                totalStudents: total,
-                studentsPerPage: limitNum,
-                hasNextPage: pageNum < Math.ceil(total / limitNum),
-                hasPrevPage: pageNum > 1
-            }
-        }, "Student list fetched successfully")
+        new ApiResponse(200, { students }, "Student list fetched successfully")
     );
 });
 

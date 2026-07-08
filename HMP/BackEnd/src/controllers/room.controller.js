@@ -76,11 +76,17 @@ const getRoomsByHostel = AsyncHandler(async (req, res) => {
     // Filter rooms where there is still space
     // If capacity is 2 and occupants are 1, it will show up.
     // If capacity is 2 and occupants are 2, it will be hidden.
+
+    // rooms.map(async...) returns an array of Promises as it is a "async" function 
+    // and if we directly console it will give us Promise(room) not the room.
+    // Promise.all waits for all of them to finish
+    // and returns their resolved values as a normal array. It is like Promise.resolve() but for multiple promises at once.
     const availableRooms = await Promise.all(rooms.map(async (room) => {
         const occupantCount = await User.countDocuments({ room: room._id });
         if (occupantCount < room.capacity) {
             return {
-                ...room._doc,
+                ...room._doc, // normal room is the MogoDB document with different function and metadata and 
+                // inside it ._doc store the raw JSON whih we need to pass to the Frontend
                 currentOccupants: occupantCount // Pass this to frontend
             };
         }

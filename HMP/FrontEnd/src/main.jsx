@@ -29,6 +29,7 @@ import StudentComplaints from './pages/student/StudentComplaints'
 import FileComplaint from './pages/student/FileComplaint'
 import WardenHomeStats from './pages/warden/WardenHomeStats'
 import StudentList from './pages/warden/StudentList'
+import StudentDetail from './pages/warden/StudentDetail'
 import StaffList from './pages/warden/StaffList'
 import RegisterStaff from './pages/warden/RegisterStaff'
 import WardenComplaints from './pages/warden/WardenComplaints'
@@ -36,6 +37,7 @@ import WardenProfile from './pages/warden/WardenProfile'
 import StudentNotices from './pages/student/StudentNotices';
 import WardenNotices from './pages/warden/WardenNotices';
 import CreateNotice from './pages/warden/CreateNotice';
+import WardenGraphs from './pages/warden/WardenGraphs.jsx';
 
 const ADMIN_ROLES = ["admin", "superAdmin"];
 const SUPER_ONLY = ["superAdmin"];
@@ -92,6 +94,7 @@ const router = createBrowserRouter(
       >
         <Route index element={<WardenHomeStats />} />
         <Route path="students" element={<StudentList />} />
+        <Route path="students/:studentId" element={<StudentDetail />} />
         <Route path="staff" element={<StaffList />} />
         <Route path="create-staff" element={<RegisterStaff />} />
         <Route path="complaints" element={<WardenComplaints />} />
@@ -99,6 +102,7 @@ const router = createBrowserRouter(
         <Route path="notices/create" element={<CreateNotice />} />
         <Route path="profile" element={<WardenProfile />} />
         <Route path="change-password" element={<ChangePassword />} />
+        <Route path="graphs" element={<WardenGraphs />} />
       </Route>
 
 

@@ -20,14 +20,13 @@ export default function Login() {
     formState: { errors },
     reset,
   } = useForm({
-    mode: "onBlur",
+    mode: "onSubmit",
     defaultValues: config.fields.reduce((acc, field) => {
       acc[field.name] = "";
       return acc;
     }, {}),
   });
 
-  // UI state
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [showPassword, setShowPassword] = useState(false);
@@ -150,7 +149,7 @@ export default function Login() {
                     onClick={() => navigate("/forgot-password")}
                     className="text-sm font-medium text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white transition-colors"
                   >
-                    Forgot {role === "student" ? "password" : "credentials"}?
+                    Forgot password ?
                   </button>
                 </div>
               )}

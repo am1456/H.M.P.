@@ -10,7 +10,6 @@ const AdminHomeStats = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
-    // 1. Dynamic Greeting Logic
     const getGreeting = () => {
         const hour = new Date().getHours();
         if (hour < 12) return "Good Morning";
@@ -18,7 +17,6 @@ const AdminHomeStats = () => {
         return "Good Evening";
     };
 
-    // 2. Logout Handler
     const handleLogout = async () => {
         try {
             await apiClient.post('/api/v1/admin/logout');

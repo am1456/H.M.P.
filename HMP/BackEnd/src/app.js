@@ -37,7 +37,7 @@ app.use("/api/v1/room", roomRouter);
 app.use("/api/v1/complaints",complaintRouter)
 // app.use("/api/v1/staff",staffRouter)
 
-// Error handling middleware
+// Error handling middleware which catch the "err" send by AsynHandeler .catch((err) => {next(err);})
 app.use((err, req, res, next) => {
     const statusCode = err.statusCode || 500;
     const message = err.message || "Internal Server Error";
